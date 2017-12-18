@@ -57,19 +57,12 @@
 package golden
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
 
 	"github.com/pmezard/go-difflib/difflib"
-)
-
-var (
-	// This flag is ONLY for use in tests.
-	updateGolden = flag.Bool("update_golden", false, "Whether to update the golden files if they differ. "+
-		"Using this flag requires that $PWD is somewhere inside a mutable google3 directory.")
 )
 
 // Compare compares the actual parameter to the contents of goldenFile and
@@ -82,7 +75,7 @@ var (
 //
 // goldenFile is a path relative to os.Getenv("GOROOT").
 func Compare(actual string, goldenFile string) string {
-	if *updateGolden {
+	if shouldUpdateGolden() {
 		fullPath, err := getFullPathForWrite(goldenFile)
 		if err != nil {
 			log.Fatalf("Error while getting path for writes: %v", err)

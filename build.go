@@ -18,12 +18,18 @@
 package golden
 
 import (
+	"flag"
 	"fmt"
 	"go/build"
 	"os"
 	"path"
 	"path/filepath"
 	"sort"
+)
+
+var (
+	// This flag is ONLY for use in tests.
+	updateGolden = flag.Bool("update_golden", false, "Whether to update the golden files if they differ.")
 )
 
 func getFullPathForRead(relPath string) (string, error) {
@@ -102,6 +108,10 @@ func getFullPathForWrite(relPath string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("none of these directories in the GOPATH exist: %v", sortedKeys(possibleDirectories))
+}
+
+func shouldUpdateGolden() bool {
+	return *updateGolden
 }
 
 func formatUpdateCommand() string {
