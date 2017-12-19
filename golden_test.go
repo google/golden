@@ -15,7 +15,6 @@
 package golden
 
 import (
-	"go/build"
 	"io/ioutil"
 	"os"
 	"path"
@@ -58,13 +57,8 @@ func TestUpdateGolden(t *testing.T) {
 	if err := os.MkdirAll(path.Join(dir, "src/fake/testdata"), 0700); err != nil {
 		t.Fatalf("Unable to create testdata directory: %v", err)
 	}
-	originalGoPath := build.Default.GOPATH
-	build.Default.GOPATH = dir
-	defer func() {
-		build.Default.GOPATH = originalGoPath
-	}()
-	*updateGolden = true
-	defer func() { *updateGolden = false }()
+	restoreFunc := enableUpdateGoldenForTest(dir)
+	defer restoreFunc()
 	{
 		want := ""
 		got := Compare("This is the new contents", "fake/testdata/haiku.txt.golden")

@@ -117,3 +117,17 @@ func shouldUpdateGolden() bool {
 func formatUpdateCommand() string {
 	return "go test -update_golden"
 }
+
+func enableUpdateGoldenForTest(tmpdir string) func() {
+	originalGoPath := build.Default.GOPATH
+	originalUpdateGolden := *updateGolden
+
+	build.Default.GOPATH = tmpdir
+	*updateGolden = true
+
+	restoreFunc := func() {
+		build.Default.GOPATH = originalGoPath
+		*updateGolden = originalUpdateGolden
+	}
+	return restoreFunc
+}
